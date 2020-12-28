@@ -17,7 +17,7 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    public const HOME = '/home';
+    public const HOME = '/dashboard';
 
     /**
      * The controller namespace for the application.
@@ -36,6 +36,8 @@ class RouteServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->configureRateLimiting();
+
+        $this->configureRatePatterns();
 
         $this->routes(function () {
             Route::prefix('api')
@@ -59,5 +61,15 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());
         });
+    }
+
+    /**
+     * Configure the rate patterns for the application.
+     *
+     * @return void
+     */
+    protected function configureRatePatterns()
+    {
+        Route::pattern('id', '[0-9]+');
     }
 }
